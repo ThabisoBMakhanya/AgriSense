@@ -1,0 +1,26 @@
+{
+    "Manzini": {
+        "cached_at": 1789367760,
+        "data": {
+            "location": "Manzini",
+            "temperature": 23.1,
+            "humidity": 47,
+            "rainfall": 1.2,
+            "wind_speed": 4.8,
+            "condition": "Clear",
+            "icon": "☀️"
+        }
+    },
+    "Hhohho": {
+        "cached_at": 1789371860,
+        "data": {
+            "location": "Mbabane",
+            "temperature": 23.1,
+            "humidity": 47,
+            "rainfall": 1.2,
+            "wind_speed": 4.8,
+            "condition": "Clear",
+            "icon": "☀️"
+        }
+    }
+}

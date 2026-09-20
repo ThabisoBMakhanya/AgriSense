@@ -1,33 +1,3 @@
 <?php
-session_start();
-
-if (!isset($_SESSION['user_email'])) {
-    header('Location: index.php');
-    exit;
-}
-
-$userName = htmlspecialchars($_SESSION['user_name'] ?? $_SESSION['user_email'], ENT_QUOTES, 'UTF-8');
-$userEmail = htmlspecialchars($_SESSION['user_email'], ENT_QUOTES, 'UTF-8');
-?>
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Kudla Kwelive | Dashboard</title>
-    <style>
-        :root { --green: #176b45; --deep-green: #0b432d; --yellow: #f5c542; --paper: #f8f6ee; --ink: #18352a; --muted: #63766c; }
-        * { box-sizing: border-box; }
-        body { margin: 0; min-height: 100vh; color: var(--ink); background: var(--paper); font-family: Arial, sans-serif; }
-        header { padding: 22px clamp(24px, 7vw, 90px); display: flex; align-items: center; justify-content: space-between; color: white; background: var(--deep-green); }
-        .brand { font-family: Georgia, serif; font-weight: bold; letter-spacing: .05em; } .logout { color: white; font-size: .85rem; }
-        main { width: min(100% - 48px, 1000px); margin: 0 auto; padding: 70px 0; } .eyebrow { color: var(--green); font-size: .75rem; font-weight: bold; letter-spacing: .12em; text-transform: uppercase; } h1 { margin: 12px 0 8px; font: 500 clamp(2.2rem, 6vw, 4.3rem) Georgia, serif; } p { color: var(--muted); } .welcome { margin-bottom: 48px; }
-        .modules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; } .module { min-height: 150px; padding: 24px; border-top: 4px solid var(--yellow); background: white; box-shadow: 0 5px 20px rgba(24,53,42,.06); } .module h2 { margin: 0 0 10px; font: 500 1.3rem Georgia, serif; } .module p { margin: 0; font-size: .9rem; line-height: 1.5; }
-        @media (max-width: 680px) { header { padding: 18px 24px; } main { padding-top: 48px; } .modules { grid-template-columns: 1fr; } }
-    </style>
-</head>
-<body>
-    <header><div class="brand">KUDLA KWELIVE</div><a class="logout" href="logout.php">Log out</a></header>
-    <main><div class="welcome"><div class="eyebrow">Farmer dashboard</div><h1>Welcome, <?php echo $userName; ?>.</h1><p>You are signed in as <?php echo $userName; ?>.</p></div><section class="modules" aria-label="Kudla Kwelive services"><article class="module"><h2>Market prices</h2><p>Compare current crop and livestock prices across Eswatini markets.</p></article><article class="module"><h2>Weather &amp; advice</h2><p>Prepare for the week with localized forecasts and agricultural guidance.</p></article><article class="module"><h2>Bulk buying groups</h2><p>Connect with cooperatives and buyers ready for your harvest.</p></article></section></main>
-</body>
-</html>
+require_once __DIR__.'/includes/auth.php'; require_once __DIR__.'/includes/weather.php'; require_once __DIR__.'/includes/ml_integration.php'; require_login(); $user=current_user(); $weather=region_weather($user['region']??'Manzini'); $classification=classify_weather($weather); $recommendations=recommend_crops($weather,$user['region']); $yield=predict_yield($weather,$user); $advice=weather_advice($weather,$classification['classification']); $allMessages=read_json(MESSAGES_FILE,[]); $messages=array_values(array_filter($allMessages,fn($m)=>($m['email']??'')===($user['email']??''))); $flash=get_flash(); $adviceText=implode(' | ',array_map(fn($item)=>$item['icon'].' '.$item['text'],$advice));
+?><!doctype html><html lang="en"><head><?php include __DIR__.'/includes/head.php'; ?><title>Dashboard | Kudla kwesive</title></head><body><header class="topbar"><a class="brand" href="dashboard.php">KUDLA <span>KWESIVE</span></a><nav><a class="text-link" href="about.php">About</a> <a class="text-link" href="profile.php">Profile</a> <a class="text-link" href="logout.php">Log out</a></nav></header><main class="dashboard"><?php if($flash): ?><div class="alert <?=$flash['type']?>"><?=e($flash['message'])?></div><?php endif; ?><div class="dash-intro"><div><p class="kicker">Your field briefing · <?=e(date('j M Y'))?></p><h1>Hello, <?=e($user['name'])?>.</h1><p class="muted"><?=e($user['region'])?> · <?=e($user['farm_size'])?> ha · <?=e($user['crop_type'])?></p></div><p class="muted">Last login: <?=e($user['last_login']??'First visit')?></p></div><div class="dash-grid"><section class="panel"><p class="kicker">Live conditions · <?=e($weather['location'])?></p><div class="weather-main"><span class="weather-icon"><?=e($weather['icon'])?></span><div><div class="temp"><?=e($weather['temperature'])?>°C</div><span class="badge"><?=e($classification['classification'])?> · <?=e($classification['confidence']??78)?>% confidence</span></div></div><div class="stats"><div><span>Humidity</span><strong><?=e($weather['humidity'])?>%</strong></div><div><span>Rainfall</span><strong><?=e($weather['rainfall'])?> mm</strong></div><div><span>Wind</span><strong><?=e($weather['wind_speed'])?> m/s</strong></div><div><span>Condition</span><strong><?=e($weather['condition'])?></strong></div></div></section><section class="panel"><p class="kicker">Today’s advice</p><div class="advice-list"><?php foreach($advice as $item): ?><div class="advice"><span><?=e($item['icon'])?></span><span><?=e($item['text'])?></span></div><?php endforeach; ?></div><form class="sms-form" method="post" action="send_advice.php"><input type="hidden" name="advice" value="<?=e($adviceText)?>"><button class="button" type="submit">Send advice to <?=e($user['phone'])?> <span>→</span></button></form></section><section class="panel"><p class="kicker">Crop fit</p><h2>What fits your conditions</h2><?php foreach($recommendations as $item): ?><div class="recommendation"><strong><?=e($item['crop'])?></strong><small><?=e($item['reason'])?> · <?=e($item['confidence'])?>%</small><div class="bar"><i style="width:<?=min(100,(int)$item['confidence'])?>%"></i></div></div><?php endforeach; ?></section><section class="panel"><p class="kicker">Yield outlook</p><h2><span class="yield-number"><?=e(number_format($yield['yield_kg_ha']))?></span> kg/ha</h2><span class="badge"><?=e($yield['status'])?></span><p class="muted">Estimated total: <strong><?=e(number_format($yield['total_yield_kg']))?> kg</strong> across your farm.</p><p class="muted">Improve results with timely irrigation, soil testing, and organic matter.</p></section><?php if($messages): ?><section class="panel full"><p class="kicker">Message history</p><?php foreach(array_slice(array_reverse($messages),0,4) as $message): ?><p class="history"><strong><?=e($message['sent_at'])?></strong> · <?=e($message['message'])?></p><?php endforeach; ?></section><?php endif; ?></div></main></body></html>

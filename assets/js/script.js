@@ -1,0 +1,1 @@
+document.addEventListener('DOMContentLoaded', () => { document.querySelectorAll('[data-dismiss]').forEach((button) => button.addEventListener('click', () => button.closest('.alert')?.remove())); const phone=document.querySelector('input[name="phone"]'); if(phone) phone.addEventListener('input',()=>{phone.value=phone.value.replace(/\D/g,'').slice(0,8);}); });
