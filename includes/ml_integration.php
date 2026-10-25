@@ -1,6 +1,47 @@
 <?php
 require_once __DIR__ . '/config.php';
+
+function ml_remote_call(string $action, array $input): ?array
+{
+    $token = getenv('ML_API_TOKEN') ?: '';
+    if ($token === '') {
+        throw new RuntimeException('The production ML API token is not configured.');
+    }
+
+    $host = getenv('VERCEL_URL') ?: 'agrisense-puce.vercel.app';
+    $url = getenv('ML_API_URL') ?: 'https://' . $host . '/api/ml';
+    $payload = json_encode(['action' => $action, 'input' => $input], JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
+    if ($payload === false) {
+        throw new RuntimeException('Could not encode the ML request.');
+    }
+
+    $context = stream_context_create([
+        'http' => [
+            'method' => 'POST',
+            'header' => "Content-Type: application/json\r\nAuthorization: Bearer {$token}\r\n",
+            'content' => $payload,
+            'timeout' => 20,
+            'ignore_errors' => true,
+        ],
+    ]);
+    $response = @file_get_contents($url, false, $context);
+    $status = 0;
+    foreach (($http_response_header ?? []) as $header) {
+        if (preg_match('/^HTTP\/\S+\s+(\d{3})/', $header, $match)) {
+            $status = (int)$match[1];
+        }
+    }
+    $result = is_string($response) ? json_decode($response, true) : null;
+    if ($status !== 200 || !is_array($result)) {
+        throw new RuntimeException('Production ML inference is unavailable.');
+    }
+    return $result;
+}
+
 function ml_call(string $action, array $input): ?array {
+    if (getenv('VERCEL')) {
+        return ml_remote_call($action, $input);
+    }
     $python=defined('PYTHON_BIN')?PYTHON_BIN:'python';
     $payload=json_encode(['action'=>$action,'input'=>$input], JSON_UNESCAPED_UNICODE|JSON_INVALID_UTF8_SUBSTITUTE);
     if ($payload === false) return null;
