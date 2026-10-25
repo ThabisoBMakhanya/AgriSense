@@ -18,13 +18,13 @@ function db(): PDO
         parse_str($parts['query'] ?? '', $query);
         $sslMode = preg_replace('/[^a-z]/', '', (string)($query['sslmode'] ?? 'require'));
         $channelBinding = preg_replace('/[^a-z]/', '', (string)($query['channel_binding'] ?? 'prefer'));
+        putenv('PGCHANNELBINDING=' . ($channelBinding !== '' ? $channelBinding : 'prefer'));
         $dsn = sprintf(
-            'pgsql:host=%s;port=%d;dbname=%s;sslmode=%s;channel_binding=%s',
+            'pgsql:host=%s;port=%d;dbname=%s;sslmode=%s',
             $parts['host'],
             (int)($parts['port'] ?? 5432),
             ltrim($parts['path'], '/'),
-            $sslMode !== '' ? $sslMode : 'require',
-            $channelBinding !== '' ? $channelBinding : 'prefer'
+            $sslMode !== '' ? $sslMode : 'require'
         );
         $username = rawurldecode($parts['user'] ?? '');
         $password = rawurldecode($parts['pass'] ?? '');
