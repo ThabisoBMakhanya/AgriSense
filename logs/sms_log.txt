@@ -1,1 +1,5 @@
 2026-09-14T07:36:10+00:00 | +268 7696 4082 | 🌤️ Good conditions for farming activities. | 🌡️ Ideal temperature range for most crops. | ☀️ Low rainfall: consider irrigation planning. | 🍃 Calm conditions are favorable.
+2026-10-25T02:38:54+00:00 | +268 7696 4082 | Good conditions for farming activities. | Ideal temperature range for most crops. | Low rainfall: consider irrigation planning. | Calm conditions are favorable.
+2026-10-25T02:57:22+00:00 | +268 7696 4082 | failed | Could not connect to the SMS provider over HTTPS.
+2026-10-25T02:57:32+00:00 | +268 7696 4082 | submitted | provider=Lunyazi segments=1
+2026-10-25T02:58:39+00:00 | +268 7696 4082 | submitted | provider=Lunyazi segments=1

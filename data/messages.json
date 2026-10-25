@@ -4,5 +4,20 @@
         "email": "bonganithabiso841@gmail.com",
         "message": "🌤️ Good conditions for farming activities. | 🌡️ Ideal temperature range for most crops. | ☀️ Low rainfall: consider irrigation planning. | 🍃 Calm conditions are favorable.",
         "sent_at": "2026-09-14 07:36:10"
+    },
+    {
+        "id": 2,
+        "email": "bonganithabiso84@gmail.com",
+        "message": "Good conditions for farming activities. | Ideal temperature range for most crops. | Low rainfall: consider irrigation planning. | Calm conditions are favorable.",
+        "sent_at": "2026-10-25 02:38:54"
+    },
+    {
+        "id": 3,
+        "email": "bonganithabiso84@gmail.com",
+        "message": "Kudla kwesive farm advice: No urgent weather action is indicated. Continue routine farm operations and monitor the forecast.",
+        "sent_at": "2026-10-25 02:58:39",
+        "status": "submitted",
+        "provider": "Lunyazi",
+        "source": "on-demand-advice"
     }
 ]

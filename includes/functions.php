@@ -8,16 +8,17 @@ function soil_value($soil): int { if (is_numeric($soil)) return max(1, min(4, (i
 function soil_label($soil): string { return ['1'=>'Poor','2'=>'Moderate','3'=>'Good','4'=>'Excellent'][(string)soil_value($soil)] ?? 'Moderate'; }
 function weather_advice(array $weather, string $classification): array {
     $items = [
-        ['icon'=>'🌤️','text'=>['excellent'=>'Excellent weather! Perfect time for farming activities.','good'=>'Good conditions for farming activities.','moderate'=>'Moderate conditions - proceed with caution.','poor'=>'Poor conditions detected. Consider postponing activities.'][$classification] ?? 'Review conditions before working.'],
-        ['icon'=>'🔥','text'=>'High temperature alert: ensure crops are well-watered and consider mulching.'],
-        ['icon'=>'❄️','text'=>'Cold conditions: protect young seedlings with covers.'],
-        ['icon'=>'🌧️','text'=>'Heavy rain expected: good for planting, but ensure proper drainage.'],
-        ['icon'=>'🌦️','text'=>'Moderate rain: ideal for applying fertilizers.'],
-        ['icon'=>'☀️','text'=>'Low rainfall: consider irrigation planning.'],
-        ['icon'=>'💨','text'=>'Strong winds predicted: check supports and harvest vulnerable fruit.'],
-        ['icon'=>'🍃','text'=>'Calm conditions are favorable.']
+        ['icon'=>'weather','text'=>['excellent'=>'Excellent weather! Perfect time for farming activities.','good'=>'Good conditions for farming activities.','moderate'=>'Moderate conditions - proceed with caution.','poor'=>'Poor conditions detected. Consider postponing activities.'][$classification] ?? 'Review conditions before working.'],
+        ['icon'=>'weather','text'=>'High temperature alert: ensure crops are well-watered and consider mulching.'],
+        ['icon'=>'weather','text'=>'Cold conditions: protect young seedlings with covers.'],
+        ['icon'=>'weather','text'=>'Heavy rain expected: good for planting, but ensure proper drainage.'],
+        ['icon'=>'weather','text'=>'Moderate rain: ideal for applying fertilizers.'],
+        ['icon'=>'weather','text'=>'Low rainfall: consider irrigation planning.'],
+        ['icon'=>'weather','text'=>'Strong winds predicted: check supports and harvest vulnerable fruit.'],
+        ['icon'=>'weather','text'=>'Calm conditions are favorable.']
     ];
     $selected = [$items[0]]; $temp=(float)$weather['temperature']; $rain=(float)$weather['rainfall']; $wind=(float)$weather['wind_speed'];
+    if (!empty($weather['weather_error'])) array_unshift($selected, ['icon'=>'weather','text'=>'Live weather unavailable; showing an estimate. '.$weather['weather_error']]);
     $selected[] = $temp > 32 ? $items[1] : ($temp < 15 ? $items[2] : ['icon'=>'🌡️','text'=>'Ideal temperature range for most crops.']);
     $selected[] = $rain > 10 ? $items[3] : ($rain >= 5 ? $items[4] : $items[5]);
     $selected[] = $wind > 15 ? $items[6] : $items[7];

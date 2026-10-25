@@ -1,0 +1,4 @@
+{
+  "require": {"php": ">=8.3", "rubix/ml": "^2.5"},
+  "autoload": {"classmap": ["ml/"]}
+}

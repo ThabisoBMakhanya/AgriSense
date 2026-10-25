@@ -1,1 +1,1 @@
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Kudla kwesive agricultural advisory system for Eswatini farmers"><link rel="stylesheet" href="assets/css/style.css"><script src="assets/js/script.js" defer></script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="agriSense farm operations and weather guidance for farmers"><link rel="stylesheet" href="assets/css/style.css"><script src="assets/js/script.js" defer></script>
