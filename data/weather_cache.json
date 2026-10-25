@@ -1,6 +1,6 @@
 {
     "Manzini": {
-        "cached_at": 1792903184,
+        "cached_at": 1792904085,
         "data": {
             "location": "Manzini",
             "temperature": 22.88,
@@ -46,7 +46,7 @@
                     "clouds": {
                         "all": 0
                     },
-                    "dt": 1792903183,
+                    "dt": 1792904083,
                     "sys": {
                         "country": "SZ",
                         "sunrise": 1792897813,
@@ -1573,7 +1573,7 @@
                     }
                 }
             },
-            "cached_at": 1792903184,
+            "cached_at": 1792904085,
             "weather_source": "OpenWeatherMap live"
         }
     },
@@ -1590,7 +1590,7 @@
         }
     },
     "Mbabane": {
-        "cached_at": 1792903181,
+        "cached_at": 1792904081,
         "data": {
             "location": "Mbabane",
             "temperature": 19.11,
@@ -1636,7 +1636,7 @@
                     "clouds": {
                         "all": 0
                     },
-                    "dt": 1792903179,
+                    "dt": 1792904080,
                     "sys": {
                         "country": "SZ",
                         "sunrise": 1792897884,
@@ -3157,12 +3157,12 @@
                     }
                 }
             },
-            "cached_at": 1792903181,
+            "cached_at": 1792904081,
             "weather_source": "OpenWeatherMap live"
         }
     },
     "Nhlangano": {
-        "cached_at": 1792903188,
+        "cached_at": 1792904089,
         "data": {
             "location": "Nhlangano",
             "temperature": 20.6,
@@ -3208,7 +3208,7 @@
                     "clouds": {
                         "all": 0
                     },
-                    "dt": 1792903187,
+                    "dt": 1792904087,
                     "sys": {
                         "country": "SZ",
                         "sunrise": 1792897815,
@@ -4738,12 +4738,12 @@
                     }
                 }
             },
-            "cached_at": 1792903188,
+            "cached_at": 1792904089,
             "weather_source": "OpenWeatherMap live"
         }
     },
     "Siteki": {
-        "cached_at": 1792903192,
+        "cached_at": 1792904094,
         "data": {
             "location": "Siteki",
             "temperature": 19.14,
@@ -4789,7 +4789,7 @@
                     "clouds": {
                         "all": 0
                     },
-                    "dt": 1792903191,
+                    "dt": 1792904092,
                     "sys": {
                         "country": "SZ",
                         "sunrise": 1792897680,
@@ -6310,7 +6310,7 @@
                     }
                 }
             },
-            "cached_at": 1792903192,
+            "cached_at": 1792904094,
             "weather_source": "OpenWeatherMap live"
         }
     },
