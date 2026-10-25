@@ -1,3 +1,5 @@
 /vendor/
 /composer.phar
 /includes/secrets.local.php
+
+.vercel

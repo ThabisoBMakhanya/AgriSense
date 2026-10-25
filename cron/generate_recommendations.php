@@ -10,14 +10,19 @@ if (LUNYAZI_SMS_API_KEY === '') {
 }
 
 $db = db();
-$lock = (int)$db->query("SELECT GET_LOCK('kudla_automatic_sms', 0)")->fetchColumn();
-if ($lock !== 1) {
+$isPostgres = db_driver() === 'pgsql';
+$lockResult = $isPostgres
+    ? $db->query("SELECT pg_try_advisory_lock(hashtext('kudla_automatic_sms'))")->fetchColumn()
+    : $db->query("SELECT GET_LOCK('kudla_automatic_sms', 0)")->fetchColumn();
+$lockAcquired = $isPostgres ? in_array($lockResult, [true, 1, '1', 't', 'true'], true) : (int)$lockResult === 1;
+if (!$lockAcquired) {
     fwrite(STDOUT,"Another automatic SMS run is already active.\n");
     exit(0);
 }
 
 try {
-    $farmers = $db->query("SELECT u.email,u.phone,u.region,u.weather_location,u.crop_type,u.soil_quality,u.farmer_type,u.growth_stage,u.soil_type FROM users u WHERE u.sms_opt_in=1 AND u.phone IS NOT NULL AND u.region IS NOT NULL AND NOT EXISTS (SELECT 1 FROM sms_logs s WHERE s.farmer_email=u.email AND s.status='submitted' AND s.created_at >= DATE_SUB(NOW(), INTERVAL 2 HOUR))")->fetchAll();
+    $recentCutoff = $isPostgres ? "s.created_at >= NOW() - INTERVAL '2 hours'" : 's.created_at >= DATE_SUB(NOW(), INTERVAL 2 HOUR)';
+    $farmers = $db->query("SELECT u.email,u.phone,u.region,u.weather_location,u.crop_type,u.soil_quality,u.farmer_type,u.growth_stage,u.soil_type FROM users u WHERE u.sms_opt_in=TRUE AND u.phone IS NOT NULL AND u.region IS NOT NULL AND NOT EXISTS (SELECT 1 FROM sms_logs s WHERE s.farmer_email=u.email AND s.status='submitted' AND {$recentCutoff})")->fetchAll();
     foreach ($farmers as $farmer) {
         try {
             $weather = fetch_weather_location(($farmer['weather_location'] ?? '') ?: $farmer['region']);
@@ -39,5 +44,9 @@ try {
     }
     echo 'Processed '.count($farmers).' opted-in farmer(s).'.PHP_EOL;
 } finally {
-    $db->query("SELECT RELEASE_LOCK('kudla_automatic_sms')");
+    if ($isPostgres) {
+        $db->query("SELECT pg_advisory_unlock(hashtext('kudla_automatic_sms'))");
+    } else {
+        $db->query("SELECT RELEASE_LOCK('kudla_automatic_sms')");
+    }
 }
