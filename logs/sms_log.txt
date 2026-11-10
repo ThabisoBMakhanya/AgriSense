@@ -3,3 +3,7 @@
 2026-10-25T02:57:22+00:00 | +268 7696 4082 | failed | Could not connect to the SMS provider over HTTPS.
 2026-10-25T02:57:32+00:00 | +268 7696 4082 | submitted | provider=Lunyazi segments=1
 2026-10-25T02:58:39+00:00 | +268 7696 4082 | submitted | provider=Lunyazi segments=1
+2026-10-25T06:54:43+00:00 | +268 7696 4082 | failed | SMS provider rejected the request (HTTP 400): message too long (max 480 chars, 3 SMS)
+2026-10-25T11:00:25+00:00 | +268 7696 4082 | submitted | provider=Lunyazi segments=2
+2026-11-03T10:47:40+00:00 | +268 7696 4082 | failed | SMS provider rejected the request (HTTP 402): Insufficient Eswatini (sz_credits) credits. This message costs 2 credit(s). Top up at lunyazi.com/dashboard/
+2026-11-03T10:54:38+00:00 | +268 7696 4082 | failed | SMS provider rejected the request (HTTP 402): Insufficient Eswatini (sz_credits) credits. This message costs 2 credit(s). Top up at lunyazi.com/dashboard/

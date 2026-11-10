@@ -1,0 +1,9 @@
+# Technical notes
+
+PHP handles authentication and profile persistence through a PDO MySQL/MariaDB connection configured with `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, and `DB_PASSWORD`. The `users` table schema is in `database/schema.sql`. Login and registration use prepared statements; passwords use `password_hash` and `password_verify`, and sessions are regenerated after login. Existing JSON accounts can be imported with `scripts/import_legacy_users.php`. Message history and SMS attempt logs are stored in JSON/text files.
+
+The existing weather classification, crop fit, and yield features still call `ml_models/run_ml.py`. The agricultural action advisory uses a separate Rubix ML Random Forest trained by `ml/train_model.php`; it combines cached OpenWeatherMap current conditions and 24-hour forecast rain probability with farmer type, soil, growth stage, and season. Each prediction records weather and model features in `ml_predictions`, and low-confidence or unavailable-model results use the training label rules as a fallback.
+
+Automatic SMS sends the primary advisory through Lunyazi's Eswatini SMS API for farmers who opted in. Its API key is read from `LUNYAZI_SMS_API_KEY` or the ignored `includes/secrets.local.php`. The recommendation cron applies a two-hour success cooldown and records submissions in `sms_logs` plus `logs/sms_log.txt`. A provider submission response is not a handset delivery receipt. Windows Task Scheduler runs weather refresh every 15 minutes and the recommendation cron every two hours.
+
+The legacy Python weather classifier is a Random Forest classifier, crop recommendations use a Random Forest classifier trained from crop climate ranges, and yield is a Random Forest regressor. Those models are generated with `train_models.py` and persisted with joblib. The new PHP advisory model is independently installed through Composer and persisted by Rubix ML.

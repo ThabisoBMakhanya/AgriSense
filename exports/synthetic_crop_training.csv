@@ -1,0 +1,97 @@
+temperature_c,rainfall_mm,humidity_pct,season_index,crop_label
+22,76,55,0,Maize
+23,79,58,1,Maize
+24,82,61,2,Maize
+25,85,64,3,Maize
+26,88,67,0,Maize
+27,91,70,1,Maize
+28,94,73,2,Maize
+29,97,76,3,Maize
+25.5,46,55,0,Sorghum
+26.5,49,58,1,Sorghum
+27.5,52,61,2,Sorghum
+28.5,55,64,3,Sorghum
+29.5,58,67,0,Sorghum
+30.5,61,70,1,Sorghum
+31.5,64,73,2,Sorghum
+32.5,67,76,3,Sorghum
+20,71,55,0,Beans
+21,74,58,1,Beans
+22,77,61,2,Beans
+23,80,64,3,Beans
+24,83,67,0,Beans
+25,86,70,1,Beans
+26,89,73,2,Beans
+27,92,76,3,Beans
+22,106,55,0,"Sweet Potatoes"
+23,109,58,1,"Sweet Potatoes"
+24,112,61,2,"Sweet Potatoes"
+25,115,64,3,"Sweet Potatoes"
+26,118,67,0,"Sweet Potatoes"
+27,121,70,1,"Sweet Potatoes"
+28,124,73,2,"Sweet Potatoes"
+29,127,76,3,"Sweet Potatoes"
+18.5,86,55,0,Cabbage
+19.5,89,58,1,Cabbage
+20.5,92,61,2,Cabbage
+21.5,95,64,3,Cabbage
+22.5,98,67,0,Cabbage
+23.5,101,70,1,Cabbage
+24.5,104,73,2,Cabbage
+25.5,107,76,3,Cabbage
+27,41,55,0,Groundnuts
+28,44,58,1,Groundnuts
+29,47,61,2,Groundnuts
+30,50,64,3,Groundnuts
+31,53,67,0,Groundnuts
+32,56,70,1,Groundnuts
+33,59,73,2,Groundnuts
+34,62,76,3,Groundnuts
+25,96,55,0,Cassava
+26,99,58,1,Cassava
+27,102,61,2,Cassava
+28,105,64,3,Cassava
+29,108,67,0,Cassava
+30,111,70,1,Cassava
+31,114,73,2,Cassava
+32,117,76,3,Cassava
+21,56,55,0,Citrus
+22,59,58,1,Citrus
+23,62,61,2,Citrus
+24,65,64,3,Citrus
+25,68,67,0,Citrus
+26,71,70,1,Citrus
+27,74,73,2,Citrus
+28,77,76,3,Citrus
+27,106,55,0,Sugarcane
+28,109,58,1,Sugarcane
+29,112,61,2,Sugarcane
+30,115,64,3,Sugarcane
+31,118,67,0,Sugarcane
+32,121,70,1,Sugarcane
+33,124,73,2,Sugarcane
+34,127,76,3,Sugarcane
+24.5,66,55,0,Cotton
+25.5,69,58,1,Cotton
+26.5,72,61,2,Cotton
+27.5,75,64,3,Cotton
+28.5,78,67,0,Cotton
+29.5,81,70,1,Cotton
+30.5,84,73,2,Cotton
+31.5,87,76,3,Cotton
+24,81,55,0,Pineapple
+25,84,58,1,Pineapple
+26,87,61,2,Pineapple
+27,90,64,3,Pineapple
+28,93,67,0,Pineapple
+29,96,70,1,Pineapple
+30,99,73,2,Pineapple
+31,102,76,3,Pineapple
+24.5,61,55,0,Mango
+25.5,64,58,1,Mango
+26.5,67,61,2,Mango
+27.5,70,64,3,Mango
+28.5,73,67,0,Mango
+29.5,76,70,1,Mango
+30.5,79,73,2,Mango
+31.5,82,76,3,Mango

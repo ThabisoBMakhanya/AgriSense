@@ -1,6 +1,6 @@
 # agriSense
 
-agriSense is a PHP farm operations and weather guidance dashboard for Eswatini farmers. It stores accounts and weather snapshots in MySQL/MariaDB and keeps message history and SMS attempt logs in JSON/text files. It uses OpenWeatherMap data when configured and falls back to seasonal local data.
+agriSense is a PHP farm operations and weather guidance dashboard for Eswatini farmers. Production accounts, weather, SMS attempts, and farm journal data use Neon PostgreSQL. The farm journal also keeps an IndexedDB offline copy and syncs edits when the device reconnects. It uses OpenWeatherMap data when configured and falls back to seasonal local data.
 
 ## Run locally
 
@@ -28,6 +28,8 @@ Run `php cron/fetch_weather.php` every 15 minutes and `php cron/generate_recomme
 
 ## SMS delivery
 
-Automatic farm-operation summaries use the Lunyazi SMS API for Eswatini. Create an account at [Lunyazi](https://www.lunyazi.com/sms/), obtain an API key, and add `define('LUNYAZI_SMS_API_KEY', 'your-key');` to the existing ignored `includes/secrets.local.php` file. Keep the OpenWeatherMap definition already in that file. Farmers opt in from registration or their farm profile. The recommendation job sends at most one concise checklist summary per opted-in farmer every two hours, using the saved weather town and farm activity. Provider credits and carrier delivery rules apply. The app records provider submission; that confirms acceptance by the provider, not handset delivery.
+Urgent weather alerts use the Lunyazi SMS API for Eswatini. Production secrets are configured in Vercel. Farmers opt in from registration or their farm profile. The Neon Function Trigger `agrisense-sms-every-2-hours` checks saved weather towns every two hours and sends only for high-risk rain, wind, heat, or cold conditions; duplicate alerts of the same type are held for six hours. The bridge function is in `neon-functions/smscron`. Provider credits and carrier delivery rules apply. The app records provider submission; that confirms acceptance by the provider, not handset delivery.
+
+The farm journal adds separate Crops & vegetables and Animals views, task reminders, scoped expense/sales/harvest tracking, photo-based pest and disease reports, livestock/poultry logs, input inventory with low-stock/expiry flags, and harvest yield by field. Farm profiles can register multiple crops, animal groups, and other enterprises in `farm_enterprises`. The journal tables are defined in `database/upgrade_farm_journal.sql`; `database/upgrade_journal_domains.sql` adds category columns to shared journal records; `database/upgrade_farm_enterprises.sql` adds and backfills registered farm enterprises. Run those migrations after the base Neon schema, or use the matching MySQL migration files for a local database. Offline journal edits queue in IndexedDB and sync to Neon when the farmer is signed in and reconnected.
 
 On Windows, PHP must have a trusted CA bundle to connect to OpenWeatherMap over HTTPS. The app checks the configured PHP CA file, common XAMPP/PHP paths, and the Git for Windows certificate bundle; set `WEATHER_CA_BUNDLE` if your CA bundle is somewhere else. The project setup registers Task Scheduler jobs for weather refresh every 15 minutes and automatic recommendations every two hours. They run as the current Windows user while that user is signed in. If you need to recreate them, register `cron/fetch_weather.php` and `cron/generate_recommendations.php` with Task Scheduler using your PHP CLI executable and the project folder as the working directory.

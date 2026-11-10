@@ -1,0 +1,169 @@
+<div class="journal-storage-note" id="journal-storage-note" role="status"><strong id="journal-sync-heading">Your farm journal</strong> <span id="journal-sync-copy">Your entries are kept on this device and synced to your account when online.</span></div>
+<p id="journal-status" class="journal-status" role="status"></p>
+<section class="journal-quick-start panel" aria-labelledby="journal-quick-title">
+  <p class="section-eyebrow">Quick start</p><h2 id="journal-quick-title">What would you like to add?</h2>
+  <p>Choose one. You only need to fill in the main details.</p>
+  <div class="journal-quick-actions">
+    <button type="button" data-open-editor="unified" data-entry-type="task"><span>+</span><strong>Add a task</strong></button>
+    <button type="button" data-open-editor="unified" data-entry-type="finance"><span>+</span><strong>Record money in or out</strong></button>
+    <button type="button" data-open-editor="unified" data-entry-type="yield"><span>+</span><strong>Record a harvest</strong></button>
+    <button type="button" data-open-editor="unified" data-entry-type="case"><span>+</span><strong>Report a problem</strong></button>
+    <button type="button" data-open-editor="unified" data-entry-type="inventory"><span>+</span><strong>Add supplies</strong></button>
+    <button type="button" data-open-editor="unified" data-entry-type="animal"><span>+</span><strong>Record an animal</strong></button>
+  </div>
+</section>
+<section class="panel journal-unified-entry" aria-labelledby="journal-entry-title" id="journal-editor-unified">
+  <div class="section-heading compact-heading"><div><p class="section-eyebrow">One simple form</p><h2 id="journal-entry-title">Add a farm entry</h2></div></div>
+  <p class="journal-help">Choose what happened. Only the matching questions will appear.</p>
+  <form id="journal-unified-form" class="journal-form">
+    <label>What are you recording?<select name="entry_type" id="journal-entry-type"><option value="task">A task</option><option value="finance">Money in or out</option><option value="yield">A harvest</option><option value="case">A crop or animal problem</option><option value="inventory">Supplies in stock</option><option value="animal">Animal care or production</option></select></label>
+    <div class="journal-entry-fields" data-fields="task" hidden>
+      <label>What needs doing?<input name="task_title" maxlength="120"></label><label>Job type<select name="task_category"><option>Planting</option><option>Weeding</option><option>Fertilizer</option><option>Watering</option><option>Pest scouting</option><option>Harvest</option><option>Animal health</option><option>Feed and water</option><option>Other</option></select></label><label>When?<input name="task_due" type="date"></label>
+      <details class="journal-optional"><summary>More details (optional)</summary><label>Repeat every (days)<input name="task_repeat" type="number" min="0" max="365" value="0"></label><label>Notes<textarea name="task_note" rows="2" maxlength="500"></textarea></label></details>
+    </div>
+    <div class="journal-entry-fields" data-fields="finance" hidden>
+      <label>Money spent or earned?<select name="finance_kind"><option value="expense">Spent money</option><option value="sale">Earned money</option><option value="harvest">Harvest payment</option></select></label><label>Record for<select name="finance_scope"><option value="crops">Crops and vegetables</option><option value="animals">Animals</option></select></label><label>What was it for?<input name="finance_item" maxlength="150"></label><label>Amount (E)<input name="finance_amount" type="number" min="0" step="0.01" value="0"></label><label>Date<input name="finance_date" type="date"></label>
+      <details class="journal-optional"><summary>More details (optional)</summary><label>Quantity<input name="finance_quantity" type="number" min="0" step="0.01"></label><label>Unit<input name="finance_unit" maxlength="30" value="kg"></label><label>Notes<textarea name="finance_note" rows="2" maxlength="500"></textarea></label></details>
+    </div>
+    <div class="journal-entry-fields" data-fields="yield" hidden>
+      <label>Field or plot<input name="yield_field" maxlength="120"></label><label>Crop<input name="yield_crop" maxlength="120"></label><label>Harvest date<input name="yield_date" type="date"></label><label>Quantity harvested<input name="yield_quantity" type="number" min="0.001" step="0.001"></label><label>Unit<input name="yield_unit" maxlength="30" value="kg"></label>
+      <details class="journal-optional"><summary>More details (optional)</summary><label>Grade<input name="yield_grade" maxlength="60"></label><label>Sale value (E)<input name="yield_sale" type="number" min="0" step="0.01" value="0"></label><label>Notes<textarea name="yield_note" rows="2" maxlength="500"></textarea></label></details>
+    </div>
+    <div class="journal-entry-fields" data-fields="case" hidden>
+      <label>Record for<select name="case_scope"><option value="crops">Crops and vegetables</option><option value="animals">Animals</option></select></label><label>Crop or animal<input name="case_subject" maxlength="150"></label><label>Severity<select name="case_severity"><option>Watching</option><option>Moderate</option><option>Urgent</option></select></label><label class="journal-wide">What do you see?<textarea name="case_symptoms" rows="3" maxlength="1200"></textarea></label><label class="photo-label">Add a photo (optional)<input name="case_photo" type="file" accept="image/*" capture="environment"></label>
+    </div>
+    <div class="journal-entry-fields" data-fields="inventory" hidden>
+      <label>Supply name<input name="inventory_name" maxlength="150"></label><label>Type<select name="inventory_kind"><option value="seed">Seed</option><option value="fertilizer">Fertilizer</option><option value="chemical">Crop protection</option><option value="feed">Animal feed</option><option value="fuel">Fuel</option><option value="other">Other</option></select></label><label>Quantity received<input name="inventory_quantity" type="number" min="0" step="0.001"></label><label>Unit (kg, bags, litres)<input name="inventory_unit" maxlength="30"></label><label>Low-stock reminder at<input name="inventory_minimum" type="number" min="0" step="0.001" value="0"></label>
+      <details class="journal-optional"><summary>More details (optional)</summary><label>Expiry date<input name="inventory_expiry" type="date"></label><label>Notes<textarea name="inventory_note" rows="2" maxlength="500"></textarea></label></details>
+    </div>
+    <div class="journal-entry-fields" data-fields="animal" hidden>
+      <label>Animal group<input name="animal_group" maxlength="100" placeholder="e.g. Pigs, chickens, goats"></label><label>What did you record?<select name="animal_activity"><option>Health check</option><option>Vaccination</option><option>Treatment</option><option>Feed</option><option>Eggs collected</option><option>Milk collected</option><option>Weight</option><option>Mortality</option><option>Other</option></select></label><label>Date<input name="animal_date" type="date"></label><label>Count or quantity<input name="animal_quantity" type="number" min="0" step="0.1"></label><label>Unit<input name="animal_unit" maxlength="20" value="animals"></label><label>Supplies used<select name="animal_stock_id"><option value="">None</option></select></label><label>Amount used<input name="animal_stock_used" type="number" min="0" step="0.001" value="0"></label><label class="journal-wide">Notes<textarea name="animal_note" rows="2" maxlength="700"></textarea></label>
+    </div>
+    <div class="journal-entry-fields" data-fields="task" hidden>
+      <label>Supplies used<select name="task_stock_id"><option value="">None</option></select></label><label>Amount used<input name="task_stock_used" type="number" min="0" step="0.001" value="0"></label>
+    </div>
+    <button class="button" type="submit">Save this entry</button>
+  </form>
+</section>
+<details class="panel journal-recording-settings"><summary>Choose what to record</summary><p>Turn off a type to hide its quick-add button. Existing records are kept.</p><div class="journal-recording-options">
+  <label><input type="checkbox" data-record-toggle="task" checked> Tasks</label><label><input type="checkbox" data-record-toggle="finance" checked> Money</label><label><input type="checkbox" data-record-toggle="yield" checked> Harvests</label><label><input type="checkbox" data-record-toggle="case" checked> Crop or animal problems</label><label><input type="checkbox" data-record-toggle="inventory" checked> Supplies and stock</label><label><input type="checkbox" data-record-toggle="animal" checked> Animal care and production</label>
+</div></details>
+<div class="journal-tools">
+  <button class="button button-light" type="button" id="journal-reminder-enable">Remind me about tasks</button>
+  <details class="journal-more-tools"><summary>More tools</summary><div class="journal-tools-menu">
+    <button class="button button-light" type="button" id="journal-retry-sync">Try syncing again</button>
+    <details class="journal-more-tools"><summary>Backup and export</summary><div class="journal-tools-menu">
+      <button class="button button-light" type="button" id="journal-export">Export backup</button>
+      <label class="button button-light journal-import-button">Import backup<input id="journal-import" type="file" accept="application/json,.json"></label>
+      <button class="button button-light" type="button" id="journal-export-csv">Export records CSV</button>
+    </div></details>
+  </div></details>
+  <details class="journal-overview"><summary>View farm totals</summary>
+    <section class="journal-summary-grid" aria-label="Farm record totals">
+      <article><span id="journal-cost-label">Crop costs</span><strong id="journal-cost-total">E0.00</strong></article>
+      <article><span id="journal-sales-label">Crop sales</span><strong id="journal-sales-total">E0.00</strong></article>
+      <article><span id="journal-profit-label">Crop net balance</span><strong id="journal-profit-total">E0.00</strong></article>
+      <article><span id="journal-harvest-label">Crop harvest recorded</span><strong id="journal-harvest-total">0 kg</strong></article>
+    </section>
+    <div class="journal-summary-grid journal-summary-extra" aria-label="Supply and field totals">
+      <article><span>Supplies to check</span><strong id="journal-low-stock-total">0</strong></article>
+      <article data-domain-summary="crops"><span>Fields with harvest records</span><strong id="journal-field-total">0</strong></article>
+      <article data-domain-summary="crops"><span>Field harvest value</span><strong id="journal-yield-sales-total">E0.00</strong></article>
+      <article data-domain-summary="crops"><span>Harvest entries</span><strong id="journal-yield-count-total">0</strong></article>
+    </div>
+  </details>
+  <details class="journal-snapshot-details"><summary>Latest weather and advice</summary>
+    <section class="journal-snapshot panel" aria-labelledby="saved-farm-title">
+      <div class="section-heading compact-heading"><div><p class="section-eyebrow">Saved on this device</p><h2 id="saved-farm-title">Farm briefing</h2></div><a href="dashboard.php">Open dashboard</a></div>
+      <div id="offline-farm-snapshot"><p class="muted">Open the dashboard while online to keep the latest weather and advice here.</p></div>
+    </section>
+  </details>
+</div>
+<p class="journal-help">Reminders appear when you open the journal on this device.</p>
+<details class="journal-all-records" id="journal-all-records"><summary>View and manage all entries</summary>
+<div class="journal-sections" id="journal-sections" data-active-domain="all">
+  <section class="panel journal-panel" data-domain="both">
+    <div class="section-heading compact-heading"><div><p class="section-eyebrow">Plan work</p><h2>Tasks</h2></div></div>
+    <p class="journal-help">Write down a job and when you want to do it.</p>
+    <details class="journal-entry-editor" id="journal-editor-task"><summary>Add a task</summary><form id="journal-task-form" class="journal-form">
+      <label>What needs doing?<input name="title" maxlength="100" required></label>
+      <label>What kind of job?<select name="category"><option>Planting</option><option>Weeding</option><option>Fertilizer</option><option>Watering</option><option>Pest scouting</option><option>Harvest</option><option>Animal health</option><option>Feed and water</option><option>Other</option></select></label>
+      <label>When?<input name="due_date" type="date" required></label>
+      <details class="journal-optional"><summary>More details (optional)</summary><label>Repeat every (days)<input name="repeat_days" type="number" min="0" max="365" value="0"></label><label>Notes<textarea name="note" rows="2" maxlength="500"></textarea></label></details>
+      <button class="button" type="submit">Add farm task</button>
+    </form></details>
+    <div id="journal-task-list" class="journal-entry-list"></div>
+  </section>
+
+  <section class="panel journal-panel" data-domain="both">
+    <div class="section-heading compact-heading"><div><p class="section-eyebrow">Money</p><h2>Money in and out</h2></div></div>
+    <p class="journal-help">Record money you spent or earned.</p>
+    <details class="journal-entry-editor" id="journal-editor-finance"><summary>Add a cost, sale, or harvest</summary><form id="journal-finance-form" class="journal-form">
+      <label>Money spent or earned?<select name="record_type"><option value="expense">Spent money</option><option value="sale">Earned money</option><option value="harvest">Harvest payment</option></select></label>
+      <label>Record for<select name="scope"><option value="crops">Crops &amp; vegetables</option><option value="animals">Animals</option></select></label>
+      <label>What was it for?<input name="item" maxlength="100" required></label>
+      <label>Amount (E)<input name="amount" type="number" min="0" step="0.01" value="0"></label>
+      <label>Date<input name="entry_date" type="date" required></label>
+      <details class="journal-optional"><summary>More details (optional)</summary><label>Quantity<input name="quantity" type="number" min="0" step="0.01"></label><label>Unit<input name="unit" maxlength="20" value="kg"></label><label>Notes<textarea name="note" rows="2" maxlength="500"></textarea></label></details>
+      <button class="button" type="submit">Save farm record</button>
+    </form></details>
+    <div id="journal-finance-list" class="journal-entry-list"></div>
+  </section>
+
+  <section class="panel journal-panel" data-domain="both">
+    <div class="section-heading compact-heading"><div><p class="section-eyebrow">Supplies</p><h2>Supplies on hand</h2></div></div>
+    <p class="journal-help">Keep a simple count of your farm supplies.</p>
+    <details class="journal-entry-editor" id="journal-editor-inventory"><summary>Add farm input</summary><form id="journal-inventory-form" class="journal-form">
+      <label>What supply?<input name="name" maxlength="150" required></label>
+      <label>Type<select name="input_type"><option value="seed">Seed</option><option value="fertilizer">Fertilizer</option><option value="chemical">Crop protection</option><option value="feed">Animal feed</option><option value="fuel">Fuel</option><option value="other">Other</option></select></label>
+      <label>How much?<input name="quantity" type="number" min="0" step="0.001" required></label>
+      <label>Unit (for example, kg or bags)<input name="unit" maxlength="30" required></label>
+      <details class="journal-optional"><summary>More details (optional)</summary><label>Low-stock reminder at<input name="minimum_quantity" type="number" min="0" step="0.001" value="0" required></label><label>Expiry date<input name="expiry_date" type="date"></label><label>Notes<textarea name="note" rows="2" maxlength="500"></textarea></label></details>
+      <button class="button" type="submit">Add inventory item</button>
+    </form></details>
+    <div id="journal-inventory-list" class="journal-entry-list"></div>
+  </section>
+
+  <section class="panel journal-panel" data-domain="crops">
+    <div class="section-heading compact-heading"><div><p class="section-eyebrow">Harvest</p><h2>Harvest by field</h2></div></div>
+    <p class="journal-help">Record what you picked and where it grew.</p>
+    <details class="journal-entry-editor" id="journal-editor-yield"><summary>Record a field harvest</summary><form id="journal-yield-form" class="journal-form">
+      <label>Field or plot<input name="field_name" maxlength="120" required></label>
+      <label>Crop<input name="crop" maxlength="120" required></label>
+      <label>Harvest date<input name="harvest_date" type="date" required></label>
+      <label>Quantity harvested<input name="quantity" type="number" min="0.001" step="0.001" required></label>
+      <label>Unit<input name="unit" maxlength="30" value="kg" required></label>
+      <details class="journal-optional"><summary>More details (optional)</summary><label>Grade<input name="grade" maxlength="60"></label><label>Sale value (SZL)<input name="sale_amount" type="number" min="0" step="0.01" value="0"></label><label>Notes<textarea name="note" rows="2" maxlength="500"></textarea></label></details>
+      <button class="button" type="submit">Record field harvest</button>
+    </form></details>
+    <div id="journal-yield-summary" class="journal-yield-summary"></div>
+    <div id="journal-yield-list" class="journal-entry-list"></div>
+  </section>
+
+  <section class="panel journal-panel" data-domain="both">
+    <div class="section-heading compact-heading"><div><p class="section-eyebrow">Health</p><h2>Report a problem</h2></div></div>
+    <p class="journal-help">Describe what you see so you can track it.</p>
+    <details class="journal-entry-editor" id="journal-editor-case"><summary>Log a crop or animal concern</summary><form id="journal-case-form" class="journal-form">
+      <label>Record for<select name="subject_type"><option value="crops">Crops &amp; vegetables</option><option value="animals">Animals</option></select></label>
+      <label>Crop or animal<input name="subject" maxlength="100" required></label>
+      <label>Severity<select name="severity"><option>Watching</option><option>Moderate</option><option>Urgent</option></select></label>
+      <label class="journal-wide">What do you see?<textarea name="symptoms" rows="3" maxlength="1200" required></textarea></label>
+      <details class="journal-optional"><summary>Add a photo (optional)</summary><label class="photo-label">Take a photo or choose an image<input name="photo" type="file" accept="image/*" capture="environment"></label></details>
+      <button class="button" type="submit">Save field case</button>
+    </form></details>
+    <div id="journal-case-list" class="journal-entry-list"></div>
+  </section>
+
+  <section class="panel journal-panel" data-domain="animals">
+    <div class="section-heading compact-heading"><div><p class="section-eyebrow">Animals</p><h2>Animal records</h2></div></div>
+    <details class="journal-entry-editor" id="journal-editor-animal"><summary>Record an animal</summary><form id="journal-animal-form" class="journal-form">
+      <label>Animal group<input name="group" maxlength="100" placeholder="e.g. Layers, cattle, goats" required></label>
+      <label>Record type<select name="activity"><option>Health check</option><option>Vaccination</option><option>Treatment</option><option>Feed</option><option>Eggs collected</option><option>Milk collected</option><option>Weight</option><option>Mortality</option><option>Other</option></select></label>
+      <label>Date<input name="entry_date" type="date" required></label>
+      <details class="journal-optional"><summary>More details (optional)</summary><label>Count or quantity<input name="quantity" type="number" min="0" step="0.1"></label><label>Unit<input name="unit" maxlength="20" value="animals"></label><label>Notes<textarea name="note" rows="2" maxlength="700"></textarea></label></details>
+      <button class="button" type="submit">Save animal record</button>
+    </form></details>
+    <div id="journal-animal-list" class="journal-entry-list"></div>
+  </section>
+</div>
+</details>

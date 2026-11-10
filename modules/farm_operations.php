@@ -65,9 +65,66 @@ function farm_operations_advice(array $weather, array $farmer): array
     return $tasks;
 }
 
+/** Weather checks for the animal groups recorded on this farmer's profile. */
+function farm_animal_weather_advice(array $weather, array $animalGroups): array
+{
+    if (!is_numeric($weather['temperature'] ?? null) || !$animalGroups) return [];
+
+    $temperature = (float)$weather['temperature'];
+    $rainProbability = (float)($weather['rain_probability'] ?? 0);
+    $rainfall = (float)($weather['rainfall'] ?? 0);
+    $condition = strtolower((string)($weather['condition'] ?? ''));
+    $stormRisk = str_contains($condition, 'storm') || $rainProbability >= 0.65 || $rainfall >= 10;
+    $groups = array_values(array_unique(array_filter(array_map('trim', $animalGroups))));
+    $poultry = array_values(array_filter($groups, static fn(string $name): bool => preg_match('/chicken|poultry|broiler|layer|hen|rooster/i', $name) === 1));
+    $pigs = array_values(array_filter($groups, static fn(string $name): bool => preg_match('/pig|swine|hog/i', $name) === 1));
+    $other = array_values(array_diff($groups, $poultry, $pigs));
+    $advice = [];
+
+    if ($temperature >= 30 && $poultry) {
+        $advice[] = ['title'=>'Hot weather: ' . implode(', ', $poultry), 'text'=>'Check that chickens have plenty of cool, clean water. Keep the coop shaded and well ventilated, and check the birds more often during the hottest hours.'];
+    }
+    if ($temperature >= 32 && $pigs) {
+        $advice[] = ['title'=>'Hot weather: ' . implode(', ', $pigs), 'text'=>'Check pigs have constant access to clean drinking water and a cool, shaded, well-ventilated area. Avoid moving or handling them during the hottest part of the day.'];
+    }
+    if ($temperature >= 32 && $other) {
+        $advice[] = ['title'=>'Heat check: ' . implode(', ', $other), 'text'=>'Check these animals have clean water, shade, and suitable airflow. Do routine handling in cooler hours and watch for unusual distress.'];
+    }
+    if ($stormRisk) {
+        $advice[] = ['title'=>'Rain and shelter: ' . implode(', ', $groups), 'text'=>'Check animal housing is dry and secure, keep feed out of the rain, and make sure animals can reach clean water. Check drains and keep animals away from flooded areas.'];
+    }
+    if (!$advice) {
+        $advice[] = ['title'=>'Animal water check: ' . implode(', ', $groups), 'text'=>'Check that your animals can reach clean drinking water and suitable shelter. Weather advice uses conditions for ' . (string)($weather['location'] ?? 'your selected place') . '.'];
+    }
+    return $advice;
+}
+
 function farm_operations_sms_text(array $tasks): string
 {
     $highlights = array_slice($tasks, 0, 3);
     $parts = array_map(fn($task) => $task['title'] . ': ' . $task['text'], $highlights);
     return implode(' | ', $parts);
+}
+
+function weather_risk_alert(array $weather): ?array
+{
+    $rainProbability = (float)($weather['rain_probability'] ?? 0);
+    $rainfall = (float)($weather['rainfall'] ?? 0);
+    $temperature = (float)($weather['temperature'] ?? 0);
+    $wind = (float)($weather['wind_kmh'] ?? ((float)($weather['wind_speed'] ?? 0) * 3.6));
+    $condition = strtolower((string)($weather['condition'] ?? ''));
+
+    if (str_contains($condition, 'storm') || $rainProbability >= 0.75 || $rainfall >= 15) {
+        return ['code'=>'heavy-rain','title'=>'Heavy rain risk','text'=>'Check field drains and low spots. Keep machinery off saturated ground and delay fertilizer until the heavy-rain risk passes.'];
+    }
+    if ($wind >= 50) {
+        return ['code'=>'strong-wind','title'=>'Strong wind risk','text'=>'Secure shade cloth, fencing, irrigation lines, and loose tools. Check supports and vulnerable structures.'];
+    }
+    if ($temperature >= 35) {
+        return ['code'=>'extreme-heat','title'=>'Extreme heat risk','text'=>'Check water and shade. Prioritize young or flowering crops and livestock during cooler hours.'];
+    }
+    if ($temperature <= 5) {
+        return ['code'=>'cold-risk','title'=>'Very cold conditions','text'=>'Protect sensitive seedlings and check that animals have dry shelter and clean water.'];
+    }
+    return null;
 }

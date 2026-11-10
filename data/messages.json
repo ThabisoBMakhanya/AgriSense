@@ -19,5 +19,14 @@
         "status": "submitted",
         "provider": "Lunyazi",
         "source": "on-demand-advice"
+    },
+    {
+        "id": 4,
+        "email": "bonganithabiso84@gmail.com",
+        "message": "agriSense weather alert [extreme-heat] for Matsapha: Check water and shade. Prioritize young or flowering crops and livestock during cooler hours.",
+        "sent_at": "2026-10-25 11:00:25",
+        "status": "submitted",
+        "provider": "Lunyazi",
+        "source": "automatic"
     }
 ]

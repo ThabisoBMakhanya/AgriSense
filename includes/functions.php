@@ -1,7 +1,13 @@
 <?php
 function e($value): string { return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8'); }
 function read_json(string $file, $fallback = []) { $data = json_decode(@file_get_contents($file), true); return is_array($data) ? $data : $fallback; }
-function write_json(string $file, $data): bool { return file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX) !== false; }
+function write_json(string $file, $data): bool {
+    $directory = dirname($file);
+    if (!is_dir($directory) || !is_writable($directory)) return false;
+    $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    if ($json === false) return false;
+    return @file_put_contents($file, $json, LOCK_EX) !== false;
+}
 function flash(string $type, string $message): void { $_SESSION['flash'] = ['type' => $type, 'message' => $message]; }
 function get_flash(): ?array { $flash = $_SESSION['flash'] ?? null; unset($_SESSION['flash']); return $flash; }
 function soil_value($soil): int { if (is_numeric($soil)) return max(1, min(4, (int)$soil)); return ['Poor'=>1, 'Moderate'=>2, 'Good'=>3, 'Excellent'=>4][$soil] ?? 2; }

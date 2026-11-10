@@ -1,0 +1,13 @@
+{
+  "name": "agriSense Farm Journal",
+  "short_name": "agriSense",
+  "description": "Weather-aware farm guidance and an offline farm journal.",
+  "start_url": "/dashboard.php",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f1f2e8",
+  "theme_color": "#173d2b",
+  "icons": [
+    { "src": "/assets/agrisense-logo.png", "sizes": "any", "type": "image/png", "purpose": "any" }
+  ]
+}

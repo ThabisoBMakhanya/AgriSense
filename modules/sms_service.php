@@ -24,7 +24,6 @@ function lunyazi_send_sms(string $phone, string $message): array
         $response = curl_exec($ch);
         $status = (int)curl_getinfo($ch,CURLINFO_RESPONSE_CODE);
         $curlError = curl_errno($ch);
-        curl_close($ch);
         if ($response === false) return ['success'=>false,'error'=>"Could not connect to the SMS provider (cURL error {$curlError})."];
     } else {
         $ssl = ['verify_peer'=>true,'verify_peer_name'=>true];
@@ -58,5 +57,5 @@ function record_lunyazi_attempt(string $email, string $phone, string $message, a
         error_log('Could not record SMS delivery attempt: '.$exception->getMessage());
     }
     $detail = !empty($result['success']) ? 'provider='.$provider.' segments='.($result['segments']??'unknown') : ($result['error']??'unknown error');
-    file_put_contents(LOG_DIR.'/sms_log.txt',date('c').' | '.$phone.' | '.$status.' | '.str_replace(["\r","\n"],' ',$detail).PHP_EOL,FILE_APPEND|LOCK_EX);
+    @file_put_contents(LOG_DIR.'/sms_log.txt',date('c').' | '.$phone.' | '.$status.' | '.str_replace(["\r","\n"],' ',$detail).PHP_EOL,FILE_APPEND|LOCK_EX);
 }

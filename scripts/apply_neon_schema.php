@@ -22,15 +22,15 @@ $dsn = "pgsql:host={$host};port={$port};dbname={$databaseName};sslmode=require";
 
 try {
     $pdo = new PDO($dsn, $username, $password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-    $schemaPath = __DIR__ . '/../database/neon_schema.sql';
-    $schema = file_get_contents($schemaPath);
-    if ($schema === false) throw new RuntimeException('Could not read the Neon schema file.');
-
-    foreach (explode(';', $schema) as $statement) {
-        if (trim($statement) !== '') $pdo->exec($statement);
+    foreach ([__DIR__ . '/../database/neon_schema.sql', __DIR__ . '/../database/upgrade_account_safety.sql', __DIR__ . '/../database/upgrade_farm_journal.sql', __DIR__ . '/../database/upgrade_journal_domains.sql', __DIR__ . '/../database/upgrade_farm_enterprises.sql'] as $schemaPath) {
+        $schema = file_get_contents($schemaPath);
+        if ($schema === false) throw new RuntimeException('Could not read a Neon schema file.');
+        foreach (explode(';', $schema) as $statement) {
+            if (trim($statement) !== '') $pdo->exec($statement);
+        }
     }
 
-    $expectedTables = ['users', 'weather_cache', 'ml_models', 'ml_predictions', 'training_data', 'sms_logs'];
+    $expectedTables = ['users', 'weather_cache', 'ml_models', 'ml_predictions', 'training_data', 'sms_logs', 'auth_attempts', 'auth_sessions', 'farm_tasks', 'farm_records', 'field_cases', 'animal_records', 'farm_inventory', 'field_harvests', 'farm_enterprises'];
     $check = $pdo->query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'");
     $createdTables = $check->fetchAll(PDO::FETCH_COLUMN);
     $missingTables = array_diff($expectedTables, $createdTables);

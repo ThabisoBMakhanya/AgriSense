@@ -12,7 +12,7 @@ $signedIn = current_user() !== null;
 <header class="topbar farmer-topbar">
     <a class="brand" href="<?= $signedIn ? 'dashboard.php' : 'index.php' ?>"><img class="brand-logo" src="assets/agrisense-logo.png" alt="agriSense"></a>
     <nav aria-label="Main navigation">
-        <?php if ($signedIn): ?><a class="text-link" href="dashboard.php">My farm</a><a class="text-link" href="profile.php">Farm profile</a><?php endif; ?>
+        <?php if ($signedIn): ?><a class="text-link" href="dashboard.php">My farm</a><a class="text-link" href="farm_journal.php">Farm journal</a><a class="text-link" href="profile.php">Farm profile</a><?php endif; ?>
         <a class="text-link active" href="about.php">How it works</a>
         <a class="text-link" href="<?= $signedIn ? 'logout.php' : 'register.php' ?>"><?= $signedIn ? 'Log out' : 'Join the network' ?></a>
     </nav>
@@ -41,7 +41,7 @@ $signedIn = current_user() !== null;
         <div class="process-steps">
             <article><span>1</span><div><h3>Describe your farm</h3><p>Add your region, crop, soil, farm size, and current growth stage.</p></div></article>
             <article><span>2</span><div><h3>Check the conditions</h3><p>The dashboard uses the latest cached weather and upcoming rain outlook for your region.</p></div></article>
-            <article><span>3</span><div><h3>Choose your next step</h3><p>Read the recommended action and confidence. Farmers who opt in receive the advice automatically by SMS about every two hours.</p></div></article>
+            <article><span>3</span><div><h3>Choose your next step</h3><p>Read the recommended action and confidence. Farmers who opt in receive an SMS when high-risk weather is detected at their saved town.</p></div></article>
         </div>
     </section>
 

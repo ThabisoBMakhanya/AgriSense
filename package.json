@@ -1,0 +1,13 @@
+{
+  "name": "agrisense",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "migrate:neon": "node scripts/apply_neon_schema.mjs",
+    "deploy": "npx vercel --prod"
+  },
+  "dependencies": {
+    "pg": "^8.23.1"
+  }
+}

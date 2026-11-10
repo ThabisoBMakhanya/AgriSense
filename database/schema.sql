@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS users (
     name VARCHAR(150) NOT NULL,
     phone VARCHAR(30) NULL,
     password_hash VARCHAR(255) NOT NULL,
+    recovery_code_hash VARCHAR(255) NULL,
     region VARCHAR(30) NULL,
     weather_location VARCHAR(100) NULL,
     farm_size DECIMAL(6, 2) NULL,
@@ -14,6 +15,24 @@ CREATE TABLE IF NOT EXISTS users (
     sms_opt_in TINYINT(1) NOT NULL DEFAULT 0,
     registered_at DATETIME NULL,
     last_login DATETIME NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS auth_attempts (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    email_key CHAR(64) NOT NULL,
+    ip_key CHAR(64) NOT NULL,
+    succeeded TINYINT(1) NOT NULL DEFAULT 0,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_auth_attempt_email_created (email_key, created_at),
+    INDEX idx_auth_attempt_ip_created (ip_key, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS auth_sessions (
+    session_id VARCHAR(128) CHARACTER SET ascii COLLATE ascii_bin NOT NULL PRIMARY KEY,
+    payload MEDIUMTEXT NOT NULL,
+    expires_at DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_auth_sessions_expires (expires_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS weather_cache (

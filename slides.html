@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10382d">
+<title>agriSense | PHP System Presentation</title>
+<style>
+  :root {
+    color-scheme: light;
+    --forest: #10382d;
+    --forest-deep: #09271f;
+    --leaf: #367b54;
+    --mint: #e8f3eb;
+    --lime: #d7ed9b;
+    --ink: #17241d;
+    --muted: #64736a;
+    --paper: #f7f8f3;
+    --line: #dce5dc;
+    --white: #fff;
+  }
+  * { box-sizing: border-box; }
+  html, body { min-height: 100%; margin: 0; }
+  body {
+    background: var(--forest-deep);
+    color: var(--ink);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  button { font: inherit; }
+  .stage { min-height: 100vh; display: grid; place-items: center; padding: 28px 28px 82px; }
+  .slide {
+    display: none;
+    position: relative;
+    width: min(1200px, 100%);
+    min-height: min(675px, calc(100vh - 110px));
+    padding: clamp(32px, 5vw, 68px);
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 22px;
+    background:
+      radial-gradient(ellipse at 100% 0%, rgba(215,237,155,.14), transparent 34%),
+      var(--paper);
+    box-shadow: 0 28px 80px rgba(0,0,0,.24);
+  }
+  .slide.active { display: flex; flex-direction: column; }
+  .slide.cover, .slide.closing { color: var(--white); background: var(--forest); }
+  .slide.cover::after, .slide.closing::after {
+    content: "";
+    position: absolute;
+    width: 440px;
+    height: 440px;
+    right: -120px;
+    bottom: -180px;
+    border: 1px solid rgba(215,237,155,.28);
+    border-radius: 50%;
+    box-shadow: 0 0 0 34px rgba(215,237,155,.035), 0 0 0 72px rgba(215,237,155,.03), 0 0 0 112px rgba(215,237,155,.025);
+    pointer-events: none;
+  }
+  .cover-content, .closing-content { position: relative; z-index: 1; margin: auto 0; max-width: 860px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 800; letter-spacing: .04em; }
+  .brand-mark { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 12px 12px 12px 3px; background: var(--lime); color: var(--forest); font-size: 19px; }
+  .eyebrow { margin: 0 0 12px; color: var(--leaf); font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+  .cover .eyebrow, .closing .eyebrow { color: var(--lime); }
+  h1, h2, h3, p { margin-top: 0; }
+  h1 { max-width: 850px; margin-bottom: 20px; font-size: clamp(42px, 6.5vw, 76px); line-height: 1.02; letter-spacing: -.055em; }
+  h2 { margin-bottom: 14px; font-size: clamp(31px, 4vw, 48px); line-height: 1.08; letter-spacing: -.04em; }
+  h3 { margin-bottom: 8px; font-size: 17px; line-height: 1.25; }
+  .lead { max-width: 740px; color: var(--muted); font-size: clamp(17px, 2vw, 21px); line-height: 1.55; }
+  .cover .lead, .closing .lead { color: rgba(255,255,255,.78); }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+  .pill { padding: 9px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--forest); font-size: 13px; font-weight: 700; }
+  .cover .pill, .closing .pill { border-color: rgba(255,255,255,.24); background: rgba(255,255,255,.08); color: var(--white); }
+  .slide-head { margin-bottom: 28px; }
+  .slide-head h2 { margin-bottom: 0; }
+  .cards { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 15px; }
+  .cards.two { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .card { min-width: 0; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.82); }
+  .card p, .card li { color: var(--muted); font-size: 14px; line-height: 1.5; }
+  .card p:last-child { margin-bottom: 0; }
+  .icon { display: grid; width: 38px; height: 38px; margin-bottom: 15px; place-items: center; border-radius: 12px; background: var(--mint); color: var(--forest); font-size: 18px; font-weight: 800; }
+  ul.clean { display: grid; gap: 10px; margin: 12px 0 0; padding: 0; list-style: none; }
+  ul.clean li { position: relative; padding-left: 20px; }
+  ul.clean li::before { content: ""; position: absolute; top: .55em; left: 1px; width: 7px; height: 7px; border-radius: 50%; background: var(--leaf); }
+  .callout { margin-top: auto; padding: 15px 18px; border-left: 4px solid var(--leaf); border-radius: 0 12px 12px 0; background: var(--mint); color: var(--forest); font-size: 14px; line-height: 1.5; }
+  .diagram { display: grid; grid-template-columns: 1fr auto 1.2fr auto 1fr; align-items: stretch; gap: 12px; margin: 12px 0 22px; }
+  .layer { display: flex; flex-direction: column; justify-content: center; min-height: 164px; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--white); }
+  .layer.primary { border-color: var(--forest); background: var(--forest); color: var(--white); }
+  .layer small { margin-bottom: 9px; color: var(--leaf); font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+  .layer.primary small { color: var(--lime); }
+  .layer strong { margin-bottom: 8px; font-size: 17px; }
+  .layer p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+  .layer.primary p { color: rgba(255,255,255,.75); }
+  .arrow { align-self: center; color: var(--leaf); font-size: 25px; font-weight: 700; }
+  .integrations { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+  .integration { padding: 13px 15px; border: 1px dashed #b7c9b8; border-radius: 12px; background: rgba(232,243,235,.6); color: var(--forest); font-size: 13px; }
+  .integration strong { display: block; margin-bottom: 4px; }
+  .steps { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; counter-reset: flow; }
+  .steps li { position: relative; display: grid; grid-template-columns: 42px 1fr; gap: 14px; padding-bottom: 18px; counter-increment: flow; }
+  .steps li::before { content: counter(flow); display: grid; width: 34px; height: 34px; place-items: center; border-radius: 50%; background: var(--forest); color: var(--white); font-size: 13px; font-weight: 800; }
+  .steps li:not(:last-child)::after { content: ""; position: absolute; top: 37px; bottom: 0; left: 16px; border-left: 1px solid #b8cdbb; }
+  .steps strong { display: block; margin: 2px 0 3px; }
+  .steps span { color: var(--muted); font-size: 14px; line-height: 1.45; }
+  .code-wrap { overflow: hidden; border-radius: 16px; background: #10251e; color: #e5f4e7; }
+  .code-top { display: flex; align-items: center; gap: 7px; padding: 13px 17px; border-bottom: 1px solid rgba(255,255,255,.1); color: #a9c5af; font-size: 12px; }
+  .code-top i { width: 8px; height: 8px; border-radius: 50%; background: #8eb98d; }
+  pre { margin: 0; padding: 23px; overflow-x: auto; font: 14px/1.8 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .kw { color: #d9e78f; }
+  .str { color: #a7d8b7; }
+  .comment { color: #85a491; }
+  .code-explain { display: grid; gap: 9px; margin-top: 16px; }
+  .code-explain div { display: flex; gap: 10px; align-items: baseline; color: var(--muted); font-size: 14px; }
+  .code-explain b { min-width: 104px; color: var(--forest); }
+  .table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 14px; background: var(--white); font-size: 14px; }
+  .table th, .table td { padding: 13px 15px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  .table th { background: var(--mint); color: var(--forest); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+  .table td:first-child { color: var(--forest); font-weight: 800; white-space: nowrap; }
+  .table tr:last-child td { border-bottom: 0; }
+  .number { color: var(--leaf); font-size: 42px; font-weight: 800; letter-spacing: -.05em; }
+  .metric-label { color: var(--muted); font-size: 13px; line-height: 1.4; }
+  .slide-foot { display: flex; justify-content: space-between; gap: 16px; margin-top: auto; padding-top: 20px; color: #7d8c81; font-size: 11px; }
+  .cover .slide-foot, .closing .slide-foot { color: rgba(255,255,255,.55); }
+  .controls { position: fixed; z-index: 5; right: 0; bottom: 0; left: 0; display: flex; align-items: center; justify-content: center; gap: 14px; min-height: 68px; padding: 12px 18px; color: var(--white); }
+  .controls button { display: inline-grid; min-width: 38px; height: 38px; padding: 0 12px; place-items: center; border: 1px solid rgba(255,255,255,.28); border-radius: 10px; background: rgba(255,255,255,.1); color: var(--white); cursor: pointer; }
+  .controls button:hover, .controls button:focus-visible { background: rgba(255,255,255,.22); outline: 2px solid var(--lime); outline-offset: 2px; }
+  .dots { display: flex; align-items: center; gap: 7px; }
+  .dots button { min-width: 9px; width: 9px; height: 9px; padding: 0; border: 0; border-radius: 50%; background: rgba(255,255,255,.36); }
+  .dots button.active { width: 23px; border-radius: 9px; background: var(--lime); }
+  #slideCounter { min-width: 46px; color: rgba(255,255,255,.75); font-size: 12px; text-align: center; }
+  .progress { position: fixed; z-index: 6; top: 0; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,.16); }
+  .progress span { display: block; width: 0; height: 100%; background: var(--lime); transition: width .2s ease; }
+  @media (max-width: 760px) {
+    .stage { padding: 12px 12px 74px; }
+    .slide { min-height: calc(100vh - 94px); padding: 28px 22px; border-radius: 16px; }
+    .cards, .cards.two { grid-template-columns: 1fr; }
+    .diagram { grid-template-columns: 1fr; }
+    .layer { min-height: auto; }
+    .arrow { justify-self: center; transform: rotate(90deg); }
+    .integrations { grid-template-columns: 1fr; }
+    .table { font-size: 12px; }
+    .table th, .table td { padding: 9px 8px; }
+    .table td:first-child { white-space: normal; }
+    .controls { gap: 9px; }
+    .controls button { min-width: 34px; height: 34px; padding: 0 9px; }
+    .dots { gap: 5px; }
+    .dots button { min-width: 7px; width: 7px; height: 7px; }
+  }
+  @media (max-height: 620px) and (min-width: 761px) {
+    .stage { padding-top: 12px; padding-bottom: 60px; }
+    .slide { min-height: calc(100vh - 74px); padding: 28px 40px; }
+    .slide-head { margin-bottom: 17px; }
+    .card { padding: 14px; }
+  }
+  @media print {
+    @page { size: landscape; margin: 0; }
+    body { background: white; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    .stage { display: block; padding: 0; }
+    .slide, .slide.active { display: flex !important; width: 100%; height: 100vh; min-height: 0; border: 0; border-radius: 0; box-shadow: none; break-after: page; page-break-after: always; }
+    .controls, .progress { display: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+<main class="stage" id="presentation">
+  <section class="slide cover active" aria-label="Slide 1: Introduction">
+    <div class="cover-content">
+      <div class="brand"><span class="brand-mark">a</span> agriSense</div>
+      <p class="eyebrow" style="margin-top:52px">PHP system presentation</p>
+      <h1>Technology that helps a farm make its next decision.</h1>
+      <p class="lead">A PHP-powered farm operations and weather guidance system built for farmers in Eswatini.</p>
+      <div class="pill-row"><span class="pill">PHP 8.3+</span><span class="pill">PDO + SQL</span><span class="pill">Weather-aware guidance</span></div>
+      <div class="slide-foot"><span>Presented by Trevor</span><span>Use ← → to navigate · F for fullscreen · P to print</span></div>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="Slide 2: The need">
+    <header class="slide-head"><p class="eyebrow">01 · The need</p><h2>Why build agriSense?</h2></header>
+    <p class="lead">Farm decisions depend on local conditions, but weather, farm records, and practical guidance are often spread across different places.</p>
+    <div class="cards" style="margin-top:22px">
+      <article class="card"><div class="icon">01</div><h3>Weather changes plans</h3><p>Rain, heat, and wind can affect when to irrigate, plant, protect animals, or work in the field.</p></article>
+      <article class="card"><div class="icon">02</div><h3>Farm records matter</h3><p>Tasks, expenses, harvests, inventory, and animal observations are easier to use when kept together.</p></article>
+      <article class="card"><div class="icon">03</div><h3>One farm, many needs</h3><p>Farmers may manage crops, livestock, poultry, fisheries, or beekeeping—not just one crop.</p></article>
+    </div>
+    <div class="callout"><strong>System goal:</strong> bring a farmer’s profile, local weather, practical checklists, and farm records into one place.</div>
+    <footer class="slide-foot"><span>agriSense · System overview</span><span>02 / 10</span></footer>
+  </section>
+
+  <section class="slide" aria-label="Slide 3: What farmers can do">
+    <header class="slide-head"><p class="eyebrow">02 · User experience</p><h2>What can a farmer do?</h2></header>
+    <div class="cards two">
+      <article class="card"><div class="icon">A</div><h3>Create a farm profile</h3><p>Register, sign in, and save location, farm activity, crops or animal groups, soil, and growth stage.</p></article>
+      <article class="card"><div class="icon">B</div><h3>Check today’s dashboard</h3><p>View local weather, risk alerts, and a checklist tailored to the farmer’s activity and crop stage.</p></article>
+      <article class="card"><div class="icon">C</div><h3>Keep a farm journal</h3><p>Record tasks, income and expenses, harvests, crop issues, inventory, and animal activities.</p></article>
+      <article class="card"><div class="icon">D</div><h3>Receive optional updates</h3><p>Farmers who opt in can receive short farm-operation messages and urgent weather alerts by SMS.</p></article>
+    </div>
+    <div class="callout"><strong>Important:</strong> recommendations are decision support. Farmers should check field conditions and local extension advice.</div>
+    <footer class="slide-foot"><span>agriSense · Farmer features</span><span>03 / 10</span></footer>
+  </section>
+
+  <section class="slide" aria-label="Slide 4: System architecture">
+    <header class="slide-head"><p class="eyebrow">03 · Architecture</p><h2>How the parts work together</h2></header>
+    <div class="diagram" aria-label="Browser connects to PHP application, which connects to database and services">
+      <div class="layer"><small>Presentation</small><strong>Farmer’s browser</strong><p>HTML, CSS, JavaScript, responsive pages, and offline journal storage.</p></div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="layer primary"><small>Application</small><strong>PHP system</strong><p>Handles sign-in, validation, business rules, database queries, and HTML or JSON responses.</p></div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="layer"><small>Persistence</small><strong>PDO + database</strong><p>MySQL/MariaDB for local use; PostgreSQL on Neon for production.</p></div>
+    </div>
+    <div class="integrations">
+      <div class="integration"><strong>Weather</strong>OpenWeatherMap data and a local cache</div>
+      <div class="integration"><strong>Recommendations</strong>PHP advice logic and ML inference tools</div>
+      <div class="integration"><strong>Messaging</strong>Optional SMS provider integration</div>
+    </div>
+    <footer class="slide-foot"><span>agriSense · System architecture</span><span>04 / 10</span></footer>
+  </section>
+
+  <section class="slide" aria-label="Slide 5: PHP request flow">
+    <header class="slide-head"><p class="eyebrow">04 · PHP request flow</p><h2>From sign-in to a useful dashboard</h2></header>
+    <ol class="steps">
+      <li><div><strong>Receive the request</strong><span>The browser sends a form or page request to a PHP entry point such as <code>index.php</code> or <code>dashboard.php</code>.</span></div></li>
+      <li><div><strong>Check identity and input</strong><span>PHP checks the session, validates submitted data, verifies CSRF tokens, and applies login throttling where needed.</span></div></li>
+      <li><div><strong>Load farm and weather data</strong><span>Reusable PHP modules fetch the farmer profile and retrieve weather from the cache or weather service.</span></div></li>
+      <li><div><strong>Apply system logic</strong><span>PHP builds weather-aware tasks and optional crop or yield estimates for that farmer.</span></div></li>
+      <li><div><strong>Return the response</strong><span>PHP renders the dashboard as HTML or serves JSON to the farm-journal interface.</span></div></li>
+    </ol>
+    <div class="callout"><strong>PHP’s role:</strong> connect the user request to authentication, data, business rules, and the final response.</div>
+    <footer class="slide-foot"><span>agriSense · Request lifecycle</span><span>05 / 10</span></footer>
+  </section>
+
+  <section class="slide" aria-label="Slide 6: PHP example">
+    <header class="slide-head"><p class="eyebrow">05 · PHP in the system</p><h2>A small example from the dashboard</h2></header>
+    <div class="cards two">
+      <div class="code-wrap">
+        <div class="code-top"><i></i><i></i><i></i><span style="margin-left:7px">dashboard.php</span></div>
+        <pre><code><span class="kw">require_once</span> __DIR__ . <span class="str">'/includes/auth.php'</span>;
+<span class="kw">require_login</span>();
+$user = <span class="kw">current_user</span>();
+
+$place = ($user[<span class="str">'weather_location'</span>] ?? <span class="str">''</span>)
+    ?: ($user[<span class="str">'region'</span>] ?? <span class="str">'Manzini'</span>);
+$weather = <span class="kw">region_weather</span>($place);
+$tasks = <span class="kw">farm_operations_advice</span>(
+    $weather,
+    $user
+);</code></pre>
+      </div>
+      <div class="card">
+        <h3>What each part demonstrates</h3>
+        <div class="code-explain">
+          <div><b>require_once</b><span>Reuse shared authentication code.</span></div>
+          <div><b>require_login()</b><span>Protect the page from signed-out visitors.</span></div>
+          <div><b>current_user()</b><span>Load the signed-in farmer’s profile.</span></div>
+          <div><b>Functions</b><span>Keep weather and farm rules reusable and testable.</span></div>
+        </div>
+        <p style="margin-top:20px"><strong>Then:</strong> PHP uses the results to build the page the farmer sees.</p>
+      </div>
+    </div>
+    <footer class="slide-foot"><span>agriSense · PHP example</span><span>06 / 10</span></footer>
+  </section>
+
+  <section class="slide" aria-label="Slide 7: Data and safety">
+    <header class="slide-head"><p class="eyebrow">06 · Data and safety</p><h2>What the system stores—and how it protects access</h2></header>
+    <table class="table">
+      <thead><tr><th>Data area</th><th>Examples</th><th>Why it is used</th></tr></thead>
+      <tbody>
+        <tr><td>Accounts</td><td>Profile, password hash, recovery-code hash</td><td>Sign-in and farmer-specific settings</td></tr>
+        <tr><td>Sessions</td><td>Session ID, session data, expiry</td><td>Keep sign-in working across requests</td></tr>
+        <tr><td>Farm journal</td><td>Tasks, records, cases, stock, harvests</td><td>Maintain the farmer’s farm history</td></tr>
+        <tr><td>System data</td><td>Weather cache, model predictions, SMS attempts</td><td>Support timely guidance and service operations</td></tr>
+      </tbody>
+    </table>
+    <div class="cards two" style="margin-top:16px">
+      <article class="card"><h3>PHP security practices</h3><p>Prepared database statements, password hashing, CSRF-token checks, login throttling, and escaped output.</p></article>
+      <article class="card"><h3>Database portability</h3><p>PDO lets PHP use MySQL/MariaDB locally and PostgreSQL in the hosted setup, with schema migrations for changes.</p></article>
+    </div>
+    <footer class="slide-foot"><span>agriSense · Data and security</span><span>07 / 10</span></footer>
+  </section>
+
+  <section class="slide" aria-label="Slide 8: Weather and guidance">
+    <header class="slide-head"><p class="eyebrow">07 · Weather and guidance</p><h2>Turn local conditions into practical checks</h2></header>
+    <div class="cards">
+      <article class="card"><div class="number">01</div><h3>Choose a place</h3><p>The farmer’s saved weather town or region determines the forecast location.</p></article>
+      <article class="card"><div class="number">15</div><h3>Cache for minutes</h3><p>Weather snapshots are cached for 15 minutes to reduce repeated external requests.</p></article>
+      <article class="card"><div class="number">→</div><h3>Build a checklist</h3><p>PHP combines weather with farm activity, soil, and growth stage to suggest what to check today.</p></article>
+    </div>
+    <div class="cards two" style="margin-top:15px">
+      <article class="card"><h3>Models are supporting tools</h3><p>Crop fit, yield estimates, and the PHP advisory model are separate from the core request flow; rule-based guidance can cover unavailable or low-confidence advice.</p></article>
+      <article class="card"><h3>Use local judgment</h3><p>The dashboard helps prioritize checks. It does not replace field inspection, soil tests, veterinary care, or agricultural extension advice.</p></article>
+    </div>
+    <footer class="slide-foot"><span>agriSense · Weather-aware decisions</span><span>08 / 10</span></footer>
+  </section>
+
+  <section class="slide" aria-label="Slide 9: Farm journal and offline">
+    <header class="slide-head"><p class="eyebrow">08 · Farm journal</p><h2>Useful records, even with patchy connectivity</h2></header>
+    <div class="cards two">
+      <article class="card"><h3>Records for the whole farm</h3><ul class="clean"><li>Tasks, reminders, and field activities</li><li>Income, expenses, and harvests</li><li>Crop problem reports and photos</li><li>Animal activity and input inventory</li></ul></article>
+      <article class="card"><h3>How offline support works</h3><ul class="clean"><li>Browser stores journal edits in IndexedDB.</li><li>Each record is associated with its farmer.</li><li>When online, JavaScript sends queued changes to the PHP API.</li><li>PHP validates the request and saves it to the database.</li></ul></article>
+    </div>
+    <div class="callout"><strong>Key idea:</strong> the browser handles the offline queue; PHP remains responsible for validating and saving records on the server.</div>
+    <footer class="slide-foot"><span>agriSense · Journal and synchronization</span><span>09 / 10</span></footer>
+  </section>
+
+  <section class="slide closing" aria-label="Slide 10: Summary and questions">
+    <div class="closing-content">
+      <div class="brand"><span class="brand-mark">a</span> agriSense</div>
+      <p class="eyebrow" style="margin-top:45px">In summary</p>
+      <h2>PHP is the system’s connector.</h2>
+      <p class="lead">It brings together the farmer’s request, secure access, database, weather, and farm-specific rules—then returns guidance the farmer can use.</p>
+      <div class="pill-row"><span class="pill">Receive</span><span class="pill">Validate</span><span class="pill">Process</span><span class="pill">Respond</span></div>
+      <p style="margin-top:40px;font-size:23px;font-weight:700">Thank you · Questions?</p>
+      <div class="slide-foot"><span>agriSense · PHP system presentation</span><span>10 / 10</span></div>
+    </div>
+  </section>
+</main>
+<nav class="controls" aria-label="Presentation controls">
+  <button type="button" id="previous" aria-label="Previous slide" title="Previous slide (Left arrow)">←</button>
+  <div class="dots" id="slideDots" aria-label="Choose a slide"></div>
+  <span id="slideCounter" aria-live="polite">1 / 10</span>
+  <button type="button" id="next" aria-label="Next slide" title="Next slide (Right arrow)">→</button>
+  <button type="button" id="fullscreen" aria-label="Toggle fullscreen" title="Toggle fullscreen (F)">⛶</button>
+</nav>
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dots = document.getElementById('slideDots');
+  const counter = document.getElementById('slideCounter');
+  const progressBar = document.getElementById('progressBar');
+  let current = 0;
+
+  function showSlide(index) {
+    current = Math.max(0, Math.min(slides.length - 1, index));
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('active', i === current);
+      slide.setAttribute('aria-hidden', String(i !== current));
+    });
+    Array.from(dots.children).forEach((dot, i) => {
+      dot.classList.toggle('active', i === current);
+      dot.setAttribute('aria-current', i === current ? 'step' : 'false');
+    });
+    counter.textContent = `${current + 1} / ${slides.length}`;
+    progressBar.style.width = `${(current / (slides.length - 1)) * 100}%`;
+  }
+
+  slides.forEach((_, index) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.setAttribute('aria-label', `Go to slide ${index + 1}`);
+    dot.addEventListener('click', () => showSlide(index));
+    dots.appendChild(dot);
+  });
+  document.getElementById('previous').addEventListener('click', () => showSlide(current - 1));
+  document.getElementById('next').addEventListener('click', () => showSlide(current + 1));
+  document.getElementById('fullscreen').addEventListener('click', () => {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen();
+  });
+  window.addEventListener('keydown', (event) => {
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    if (event.key === 'ArrowRight' || event.key === ' ') {
+      event.preventDefault();
+      showSlide(current + 1);
+    } else if (event.key === 'ArrowLeft') {
+      showSlide(current - 1);
+    } else if (event.key === 'Home') {
+      showSlide(0);
+    } else if (event.key === 'End') {
+      showSlide(slides.length - 1);
+    } else if (event.key.toLowerCase() === 'f') {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else document.documentElement.requestFullscreen();
+    } else if (event.key.toLowerCase() === 'p') {
+      window.print();
+    }
+  });
+  showSlide(0);
+</script>
+</body>
+</html>

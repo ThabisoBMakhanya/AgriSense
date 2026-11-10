@@ -3,3 +3,8 @@
 /includes/secrets.local.php
 
 .vercel
+node_modules/
+/public/
+.env
+.env.*
+!.env.example

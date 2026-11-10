@@ -18,14 +18,23 @@ function db(): PDO
         parse_str($parts['query'] ?? '', $query);
         $sslMode = preg_replace('/[^a-z]/', '', (string)($query['sslmode'] ?? 'require'));
         $channelBinding = preg_replace('/[^a-z]/', '', (string)($query['channel_binding'] ?? 'prefer'));
+        if (getenv('VERCEL') || getenv('VERCEL_URL')) {
+            // Neon pooler authentication on the Vercel libpq build cannot satisfy channel_binding=require.
+            $channelBinding = 'prefer';
+        }
         putenv('PGCHANNELBINDING=' . ($channelBinding !== '' ? $channelBinding : 'prefer'));
         $dsn = sprintf(
-            'pgsql:host=%s;port=%d;dbname=%s;sslmode=%s',
+            'pgsql:host=%s;port=%d;dbname=%s;sslmode=%s;connect_timeout=3',
             $parts['host'],
             (int)($parts['port'] ?? 5432),
             ltrim($parts['path'], '/'),
             $sslMode !== '' ? $sslMode : 'require'
         );
+        $endpointId = preg_replace('/-pooler$/', '', explode('.', $parts['host'])[0]);
+        if (str_starts_with($endpointId, 'ep-')) {
+            // The bundled Vercel libpq lacks SNI; Neon requires its endpoint ID in startup options.
+            $dsn .= ';options=endpoint=' . $endpointId;
+        }
         $username = rawurldecode($parts['user'] ?? '');
         $password = rawurldecode($parts['pass'] ?? '');
         if ($username === '') {
@@ -58,6 +67,7 @@ function db(): PDO
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES => false,
+        PDO::ATTR_TIMEOUT => 3,
     ]);
 
     return $connection;

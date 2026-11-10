@@ -4,9 +4,7 @@ import math
 import os
 from http.server import BaseHTTPRequestHandler
 
-from ml_models.crop_recommender import recommend_crops
-from ml_models.weather_classifier import classify_weather
-from ml_models.yield_predictor import predict_yield
+from ml_models.lightweight_inference import recommend_crops, classify_weather, predict_yield
 
 
 MAX_REQUEST_BYTES = 65536

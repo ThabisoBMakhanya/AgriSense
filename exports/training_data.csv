@@ -1,0 +1,1 @@
+id,temp_c,humidity_pct,rain_probability,wind_kmh,cloud_pct,condition_encoded,farmer_type_encoded,growth_stage,soil_type_encoded,season_encoded,label_class,source,created_at

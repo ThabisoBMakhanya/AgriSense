@@ -11,7 +11,16 @@ function weather_location(string $regionOrLocation): array
         'Siteki'=>['Siteki',-26.4525,31.9472], 'Big Bend'=>['Big Bend',-26.8167,31.9333], 'Mhlume'=>['Mhlume',-26.0333,31.8833], 'Simunye'=>['Simunye',-26.2000,31.9000],
     ];
     if (isset($places[$regionOrLocation])) return $places[$regionOrLocation];
-    return ['Hhohho'=>$places['Mbabane'], 'Manzini'=>$places['Manzini'], 'Shiselweni'=>$places['Nhlangano'], 'Lubombo'=>$places['Siteki']][$regionOrLocation] ?? $places['Manzini'];
+    // Select locations may contain typographic apostrophes or legacy mojibake.
+    // Resolve those to the same town coordinates instead of falling back to a region.
+    $normalise = static fn(string $value): string => strtolower(preg_replace('/[^a-z0-9]/i', '', str_replace(['â€™', '’', '`'], '', $value)));
+    $wanted = $normalise($regionOrLocation);
+    foreach ($places as $name => $place) {
+        if ($normalise($name) === $wanted) return $place;
+    }
+    $regions = ['Hhohho'=>$places['Mbabane'], 'Manzini'=>$places['Manzini'], 'Shiselweni'=>$places['Nhlangano'], 'Lubombo'=>$places['Siteki']];
+    if (isset($regions[$regionOrLocation])) return $regions[$regionOrLocation];
+    throw new InvalidArgumentException('Choose a supported town or place for local weather.');
 }
 
 function weather_cached(string $location): ?array
@@ -50,7 +59,7 @@ function weather_http(string $url): array
         $curlOptions = [CURLOPT_RETURNTRANSFER=>true,CURLOPT_CONNECTTIMEOUT=>5,CURLOPT_TIMEOUT=>10];
         if ($caBundle !== '' && is_file($caBundle)) $curlOptions[CURLOPT_CAINFO] = $caBundle;
         curl_setopt_array($ch, $curlOptions);
-        $body = curl_exec($ch); $status = (int)curl_getinfo($ch, CURLINFO_RESPONSE_CODE); $curlError = curl_errno($ch); curl_close($ch);
+        $body = curl_exec($ch); $status = (int)curl_getinfo($ch, CURLINFO_RESPONSE_CODE); $curlError = curl_errno($ch);
         if ($body === false) throw new RuntimeException("Could not connect to OpenWeatherMap over HTTPS (cURL error {$curlError}).");
     } else {
         $sslOptions = ['verify_peer'=>true,'verify_peer_name'=>true];
@@ -96,7 +105,7 @@ function fetch_weather_location(string $region, bool $force = false): array
             : 'INSERT INTO weather_cache (location,temp_c,humidity_pct,rain_probability,wind_kmh,cloud_pct,condition_text,raw_json,fetched_at) VALUES (?,?,?,?,?,?,?,?,NOW()) ON DUPLICATE KEY UPDATE temp_c=VALUES(temp_c),humidity_pct=VALUES(humidity_pct),rain_probability=VALUES(rain_probability),wind_kmh=VALUES(wind_kmh),cloud_pct=VALUES(cloud_pct),condition_text=VALUES(condition_text),raw_json=VALUES(raw_json),fetched_at=NOW()';
         $q = db()->prepare($sql);
         $q->execute([$location,$data['temperature'],$data['humidity'],$rainProbability,$data['wind_kmh'],$data['cloud_pct'],$data['condition'],$raw]);
-    } catch (Throwable $e) { /* Support local preview mode; configured deployments use MySQL. */ }
+    } catch (Throwable $e) { error_log('Weather cache database write failed: ' . $e->getMessage()); }
     $cache = read_json(WEATHER_CACHE_FILE, []); $cache[$location] = ['cached_at'=>$now,'data'=>$data]; write_json(WEATHER_CACHE_FILE,$cache);
     return $data;
 }
